@@ -1,6 +1,8 @@
-package com.hyenatest.newsfeed.data
+package com.tolyn.newsfeed.data
 
 import com.google.gson.Gson
+import java.util.logging.Level
+import java.util.logging.Logger
 
 enum class NewsCategory {
     Crime, Business, Cars, Entertainment, Family, Health, Politics, Religion, Science
@@ -14,15 +16,16 @@ enum class NewsProvider(val key: String) {
 
 class NewsInfo(private val jsonString: String) {
 
-    private val parserNewsList: List<News> by lazy {
+    private val parserNewsList: NewsList by lazy {
+        Logger.getGlobal().log(Level.ALL, "jsonString ${jsonString.length}")
         if (jsonString.isBlank()) {
-            emptyList()
+            NewsList(emptyList())
         } else {
-            Gson().fromJson(jsonString, NewsList::class.java).newsList
+            Gson().fromJson(jsonString, NewsList::class.java)
         }
     }
 
-    fun getNewsList(): List<News> {
+    fun getNewsList(): NewsList {
         return parserNewsList
     }
 

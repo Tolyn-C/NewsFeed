@@ -1,4 +1,4 @@
-package com.hyenatest.newsfeed
+package com.tolyn.newsfeed
 
 import android.content.ComponentName
 import android.content.Context
@@ -12,8 +12,13 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.hyenatest.newsfeed.databinding.ActivityMainBinding
-import com.hyenatest.newsfeed.service.NewsFeedService
+import com.tolyn.newsfeed.data.NewsInfo
+import com.tolyn.newsfeed.databinding.ActivityMainBinding
+import com.tolyn.newsfeed.service.NewsFeedProviderService
+import com.tolyn.newsfeed.service.NewsFeedService
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.singleton
 import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset
@@ -21,6 +26,24 @@ import java.nio.charset.Charset
 class MainActivity : AppCompatActivity(), ServiceConnection {
 
     private lateinit var binding: ActivityMainBinding
+    private var serviceBound = false
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this, NewsFeedProviderService::class.java).also { intent ->
+            println("startService")
+            startService(intent)
+            bindService(intent, this, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (serviceBound) {
+            println("ServiceBindingActivity serviceBound $serviceBound")
+            unbindService(this)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +52,8 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.navView
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
@@ -42,11 +63,29 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
         navView.setupWithNavController(navController)
     }
 
-    override fun onStart() {
-        super.onStart()
-        Intent(this, NewsFeedService::class.java).also { intent ->
-            startService(intent)
-            bindService(intent, this, Context.BIND_AUTO_CREATE)
+    override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
+        val binder = service as NewsFeedProviderService.LocalBinder
+        val providerService = DI.Module("NewsFeedProviderService") {
+            bind<NewsFeedService>() with singleton {
+                binder.getNewsFeedService().provide()
+            }
+        }
+        App.setUpDi {
+            listOf(providerService, newsInfo)
+        }
+        serviceBound = true
+
+    }
+
+    override fun onServiceDisconnected(p0: ComponentName?) {
+        serviceBound = false
+    }
+
+    private val newsInfo = DI.Module("newsInfo") {
+        bind<NewsInfo.NewsList>() with singleton {
+            loadNewsJSONFromAsset()?.let {
+                NewsInfo(it).getNewsList()
+            } ?: NewsInfo("").getNewsList()
         }
     }
 
@@ -64,13 +103,5 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
             return null
         }
         return json
-    }
-
-    override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onServiceDisconnected(p0: ComponentName?) {
-        TODO("Not yet implemented")
     }
 }

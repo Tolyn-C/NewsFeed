@@ -1,10 +1,12 @@
-package com.hyenatest.newsfeed.service
+package com.tolyn.newsfeed.service
 
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.hyenatest.newsfeed.data.NewsInfo
+import com.tolyn.newsfeed.data.NewsInfo
+
+enum class TimeDateSort { Descending, Ascending }
 
 interface NewsFeedService {
     interface Provider {
@@ -32,6 +34,10 @@ class NewsFeedProviderService : Service(), NewsFeedService.Provider {
 
     override fun provide(): NewsFeedService {
         return MockNewsFeedService()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
     }
 
 }

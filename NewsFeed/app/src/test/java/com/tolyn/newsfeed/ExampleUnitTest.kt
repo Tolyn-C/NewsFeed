@@ -1,4 +1,4 @@
-package com.hyenatest.newsfeed
+package com.tolyn.newsfeed
 
 import org.junit.Test
 
