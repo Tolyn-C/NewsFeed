@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id "com.google.protobuf"
+    id 'com.squareup.sqldelight'
 }
 
 android {
@@ -35,6 +36,10 @@ android {
     buildFeatures {
         viewBinding true
         dataBinding true
+    }
+
+    packagingOptions {
+        resources.excludes += "DebugProbesKt.bin"
     }
 }
 
@@ -68,9 +73,12 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
+
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
     implementation 'org.kodein.di:kodein-di:7.0.0'
     implementation 'com.google.code.gson:gson:2.8.8'
 
@@ -79,4 +87,8 @@ dependencies {
     implementation("androidx.datastore:datastore:1.0.0-alpha06") {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core-android'
     }
+
+    //sql
+    implementation "com.squareup.sqldelight:android-driver:1.4.0"
+    implementation("com.squareup.sqldelight:coroutines-extensions:1.2.1")
 }

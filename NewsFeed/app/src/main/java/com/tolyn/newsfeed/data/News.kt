@@ -1,6 +1,7 @@
 package com.tolyn.newsfeed.data
 
 import com.google.gson.Gson
+import com.tolyn.database.News_info
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -9,9 +10,8 @@ enum class NewsCategory {
 }
 
 enum class NewsProvider(val key: String) {
-    DailyTimes("Daily Times"), NewsExpress("News Express"), DailyBugle("Daily Bugle"), NewNews("New News"), NewsNow(
-        "News Now"
-    )
+    DailyTimes("Daily Times"), NewsExpress("News Express"),
+    DailyBugle("Daily Bugle"), NewNews("New News"), NewsNow("News Now")
 }
 
 class NewsInfo(private val jsonString: String) {
@@ -39,6 +39,11 @@ class NewsInfo(private val jsonString: String) {
         val author: String,
         val time: String,
         val descriptiveStory: String,
-        val url: String
+        val url: String,
+    )
+
+    data class NewsItem(
+        var dbItem: News_info,
+        var isRead: Boolean = false
     )
 }

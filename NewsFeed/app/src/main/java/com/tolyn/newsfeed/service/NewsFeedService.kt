@@ -4,7 +4,10 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import com.tolyn.newsfeed.data.NewsCategory
 import com.tolyn.newsfeed.data.NewsInfo
+import com.tolyn.newsfeed.data.NewsProvider
+import kotlinx.coroutines.flow.StateFlow
 
 enum class TimeDateSort { Descending, Ascending }
 
@@ -13,9 +16,21 @@ interface NewsFeedService {
         fun provide(): NewsFeedService
     }
 
-    fun getTotalNewsList(): List<NewsInfo.News>
+    val newsList: StateFlow<List<NewsInfo.NewsItem>>
+    val newsTimeDateSort: StateFlow<TimeDateSort>
+    val newsProviderFilter: StateFlow<List<NewsProvider>>
+    val newsCategoryFilter: StateFlow<List<NewsCategory>>
+    val newsProviderSubscribe: StateFlow<List<NewsProvider>>
 
-    fun updateNewsProvider()
+    fun updateNewsTimeDateSort(sort: TimeDateSort)
+
+    fun updateNewsProviderFilter(filterList: List<NewsProvider>)
+
+    fun updateNwsCategoryFilter(filterList: List<NewsCategory>)
+
+    fun updateNwsProviderSubscribe(filterList: List<NewsProvider>)
+
+    fun updateNewsItemIsRead(id: Long)
 }
 
 class NewsFeedProviderService : Service(), NewsFeedService.Provider {

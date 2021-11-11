@@ -13,8 +13,6 @@ class DashboardFragment : Fragment() {
     private lateinit var dashboardViewModel: DashboardViewModel
     private var _binding: FragmentDashboardBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -41,6 +39,7 @@ class DashboardFragment : Fragment() {
         val originState = binding.newsProviderFilterLayout.visibility
         binding.newsProviderFilterLayout.visibility =
             if (originState == View.VISIBLE) View.GONE else View.VISIBLE
+        binding.newsProviderSubscribeLayout.visibility = binding.newsProviderFilterLayout.visibility
     }
 
     fun clickCategoryLayout() {
@@ -48,5 +47,4 @@ class DashboardFragment : Fragment() {
         binding.categoryFilterFLayout.visibility =
             if (originState == View.VISIBLE) View.GONE else View.VISIBLE
     }
-
 }

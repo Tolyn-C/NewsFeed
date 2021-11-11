@@ -1,0 +1,23 @@
+import java.util.Date;
+
+CREATE TABLE IF NOT EXISTS news_info (
+id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  provider TEXT ,
+  category TEXT ,
+  title TEXT ,
+  subtitle TEXT ,
+  author TEXT ,
+  time INTEGER AS Date NOT NULL, 
+  descriptiveStory TEXT ,
+  url TEXT ,
+  isRead INTEGER DEFAULT 0
+);
+
+addNews:
+INSERT INTO news_info VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateIsRead:
+UPDATE news_info SET isRead  = ? WHERE id = ?;
+
+selectInstructions:
+SELECT * FROM news_info ;

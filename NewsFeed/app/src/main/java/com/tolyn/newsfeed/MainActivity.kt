@@ -12,12 +12,17 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.tolyn.database.News_info
 import com.tolyn.newsfeed.data.NewsInfo
+import com.tolyn.newsfeed.data.UserPreferencesRepository
+import com.tolyn.newsfeed.data.dateCalendarAdapter
 import com.tolyn.newsfeed.databinding.ActivityMainBinding
 import com.tolyn.newsfeed.service.NewsFeedProviderService
 import com.tolyn.newsfeed.service.NewsFeedService
 import org.kodein.di.DI
 import org.kodein.di.bind
+import org.kodein.di.instance
 import org.kodein.di.singleton
 import java.io.IOException
 import java.io.InputStream
@@ -31,7 +36,6 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
     override fun onStart() {
         super.onStart()
         Intent(this, NewsFeedProviderService::class.java).also { intent ->
-            println("startService")
             startService(intent)
             bindService(intent, this, Context.BIND_AUTO_CREATE)
         }
@@ -40,7 +44,6 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
     override fun onStop() {
         super.onStop()
         if (serviceBound) {
-            println("ServiceBindingActivity serviceBound $serviceBound")
             unbindService(this)
         }
     }
@@ -55,9 +58,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
         val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
+            setOf(R.id.navigation_home, R.id.navigation_dashboard)
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -65,13 +66,34 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
 
     override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
         val binder = service as NewsFeedProviderService.LocalBinder
+
+        val driver = AndroidSqliteDriver(
+            Database.Schema,
+            applicationContext,
+            "news.db"
+        )
+        Database.Schema.create(driver)
+        val database = Database(
+            driver = driver, news_infoAdapter = News_info.Adapter(
+                timeAdapter = dateCalendarAdapter
+            )
+        )
+        val databaseDiModule = DI.Module("Database") {
+            bind<Database>() with instance(database)
+        }
+        val protoDiModule = DI.Module("proto") {
+            val userPreferencesRepository = UserPreferencesRepository.getInstance(this@MainActivity)
+            bind<UserPreferencesRepository>() with singleton {
+                userPreferencesRepository
+            }
+        }
         val providerService = DI.Module("NewsFeedProviderService") {
             bind<NewsFeedService>() with singleton {
                 binder.getNewsFeedService().provide()
             }
         }
         App.setUpDi {
-            listOf(providerService, newsInfo)
+            listOf(databaseDiModule, protoDiModule, providerService, newsInfo)
         }
         serviceBound = true
 

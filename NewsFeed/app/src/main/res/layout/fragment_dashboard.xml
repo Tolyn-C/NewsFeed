@@ -5,9 +5,9 @@
 
     <data>
 
-        <import type="com.tolyn.newsfeed.data.NewsCategory"/>
+        <import type="com.tolyn.newsfeed.data.NewsCategory" />
 
-        <import type="com.tolyn.newsfeed.data.NewsProvider"/>
+        <import type="com.tolyn.newsfeed.data.NewsProvider" />
 
         <variable
             name="fragment"
@@ -61,50 +61,131 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:gravity="center_horizontal"
-                android:orientation="vertical"
                 android:onClick="@{() -> fragment.clickNewsProviderLayout()}"
+                android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/timeDateSortLinearLayout">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="News Provider Filter" />
-
                 <LinearLayout
-                    android:id="@+id/newsProviderFilterLayout"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@color/gray_d2"
+                        android:gravity="center"
+                        android:text="Subscribe News Provider"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
-                    <CheckBox
+                    <LinearLayout
+                        android:id="@+id/newsProviderSubscribeLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Daily Times"
-                        android:onClick="@{() -> vm.checkNewsProviderFilterCheck()}"/>
+                        android:orientation="vertical">
 
-                    <CheckBox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="News Express" />
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderSubscribe.contains(NewsProvider.DailyTimes)}"
+                            android:onClick="@{() -> vm.checkNewsProviderSubscribeCheck(NewsProvider.DailyTimes)}"
+                            android:text="Daily Times" />
 
-                    <CheckBox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Daily Bugle" />
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderSubscribe.contains(NewsProvider.NewsExpress)}"
+                            android:onClick="@{() -> vm.checkNewsProviderSubscribeCheck(NewsProvider.NewsExpress)}"
+                            android:text="News Express" />
 
-                    <CheckBox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="New News" />
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderSubscribe.contains(NewsProvider.DailyBugle)}"
+                            android:onClick="@{() -> vm.checkNewsProviderSubscribeCheck(NewsProvider.DailyBugle)}"
+                            android:text="Daily Bugle" />
 
-                    <CheckBox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="News Now" />
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderSubscribe.contains(NewsProvider.NewNews)}"
+                            android:onClick="@{() -> vm.checkNewsProviderSubscribeCheck(NewsProvider.NewNews)}"
+                            android:text="New News" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderSubscribe.contains(NewsProvider.NewsNow)}"
+                            android:onClick="@{() -> vm.checkNewsProviderSubscribeCheck(NewsProvider.NewsNow)}"
+                            android:text="News Now" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@color/gray_d2"
+                        android:gravity="center"
+                        android:text="News Provider Filter"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/newsProviderFilterLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderFilter.contains(NewsProvider.DailyTimes)}"
+                            android:onClick="@{() -> vm.checkNewsProviderFilterCheck(NewsProvider.DailyTimes)}"
+                            android:text="Daily Times" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderFilter.contains(NewsProvider.NewsExpress)}"
+                            android:onClick="@{() -> vm.checkNewsProviderFilterCheck(NewsProvider.NewsExpress)}"
+                            android:text="News Express" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderFilter.contains(NewsProvider.DailyBugle)}"
+                            android:onClick="@{() -> vm.checkNewsProviderFilterCheck(NewsProvider.DailyBugle)}"
+                            android:text="Daily Bugle" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderFilter.contains(NewsProvider.NewNews)}"
+                            android:onClick="@{() -> vm.checkNewsProviderFilterCheck(NewsProvider.NewNews)}"
+                            android:text="New News" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsProviderFilter.contains(NewsProvider.NewsNow)}"
+                            android:onClick="@{() -> vm.checkNewsProviderFilterCheck(NewsProvider.NewsNow)}"
+                            android:text="News Now" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
 
             </LinearLayout>
 
@@ -114,16 +195,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:gravity="center_horizontal"
-                android:orientation="vertical"
                 android:onClick="@{() -> fragment.clickCategoryLayout()}"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/newsProviderLayout">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Category Filter" />
+                    android:background="@color/gray_d2"
+                    android:gravity="center"
+                    android:text="Category Filter"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/categoryFilterFLayout"
@@ -139,16 +224,22 @@
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsCategoryFilter.contains(NewsCategory.Crime)}"
+                            android:onClick="@{() -> vm.checkNewsCategoryFilterCheck(NewsCategory.Crime)}"
                             android:text="Crime" />
 
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsCategoryFilter.contains(NewsCategory.Business)}"
+                            android:onClick="@{() -> vm.checkNewsCategoryFilterCheck(NewsCategory.Business)}"
                             android:text="Business" />
 
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsCategoryFilter.contains(NewsCategory.Cars)}"
+                            android:onClick="@{() -> vm.checkNewsCategoryFilterCheck(NewsCategory.Cars)}"
                             android:text="Cars" />
                     </LinearLayout>
 
@@ -160,16 +251,22 @@
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsCategoryFilter.contains(NewsCategory.Entertainment)}"
+                            android:onClick="@{() -> vm.checkNewsCategoryFilterCheck(NewsCategory.Entertainment)}"
                             android:text="Entertainment" />
 
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsCategoryFilter.contains(NewsCategory.Family)}"
+                            android:onClick="@{() -> vm.checkNewsCategoryFilterCheck(NewsCategory.Family)}"
                             android:text="Family" />
 
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsCategoryFilter.contains(NewsCategory.Health)}"
+                            android:onClick="@{() -> vm.checkNewsCategoryFilterCheck(NewsCategory.Health)}"
                             android:text="Health" />
                     </LinearLayout>
 
@@ -181,16 +278,22 @@
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsCategoryFilter.contains(NewsCategory.Politics)}"
+                            android:onClick="@{() -> vm.checkNewsCategoryFilterCheck(NewsCategory.Politics)}"
                             android:text="Politics" />
 
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsCategoryFilter.contains(NewsCategory.Religion)}"
+                            android:onClick="@{() -> vm.checkNewsCategoryFilterCheck(NewsCategory.Religion)}"
                             android:text="Religion" />
 
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="@{ vm.newsCategoryFilter.contains(NewsCategory.Science)}"
+                            android:onClick="@{() -> vm.checkNewsCategoryFilterCheck(NewsCategory.Science)}"
                             android:text="Science" />
 
                     </LinearLayout>
