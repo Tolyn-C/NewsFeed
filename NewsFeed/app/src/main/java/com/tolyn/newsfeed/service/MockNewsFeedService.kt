@@ -2,9 +2,11 @@ package com.tolyn.newsfeed.service
 
 import com.tolyn.newsfeed.App
 import com.tolyn.newsfeed.Database
+import com.tolyn.newsfeed.UserPreferences
 import com.tolyn.newsfeed.data.NewsCategory
 import com.tolyn.newsfeed.data.NewsInfo
 import com.tolyn.newsfeed.data.NewsProvider
+import com.tolyn.newsfeed.data.UserPreferencesRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,22 +39,31 @@ class MockNewsFeedService : NewsFeedService {
     private val dateTimeFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH)
 
     init {
-        updateNewsList()
+        loadNewsProviderSubscribe()
+        loadNewsList()
     }
 
     override fun updateNewsTimeDateSort(sort: TimeDateSort) {
         _newsTimeDateSort.value = sort
-        updateNewsList()
+        loadNewsList()
     }
 
     override fun updateNwsCategoryFilter(filterList: List<NewsCategory>) {
         _newsCategoryFilter.value = filterList
-        updateNewsList()
+        loadNewsList()
     }
 
     override fun updateNwsProviderSubscribe(filterList: List<NewsProvider>) {
         _newsProviderSubscribe.value = filterList
-        updateNewsList()
+        loadNewsList()
+        GlobalScope.launch {
+            NewsProvider.values().forEach {
+                getUserData().updateProviderSubscribe(it, false)
+            }
+            filterList.forEach {
+                getUserData().updateProviderSubscribe(it, true)
+            }
+        }
     }
 
     override fun updateNewsItemIsRead(id: Long) {
@@ -61,10 +72,10 @@ class MockNewsFeedService : NewsFeedService {
 
     override fun updateNewsProviderFilter(filterList: List<NewsProvider>) {
         _newsProviderFilter.value = filterList
-        updateNewsList()
+        loadNewsList()
     }
 
-    private fun updateNewsList() {
+    private fun loadNewsList() {
         GlobalScope.launch {
             getTotalNewsList()
             val originList = _newsList.value.toMutableList()
@@ -130,9 +141,27 @@ class MockNewsFeedService : NewsFeedService {
         _newsList.value = uiList
     }
 
+    private fun loadNewsProviderSubscribe() {
+        GlobalScope.launch {
+            val newsProviderSubscribeList = mutableListOf<NewsProvider>()
+            NewsProvider.values().forEach { provider ->
+                val isSubscribe = getUserData().getIsProviderSubscribe(provider)
+                isSubscribe?.let {
+                    if (it) newsProviderSubscribeList.add(provider)
+                }
+            }
+            _newsProviderSubscribe.value = newsProviderSubscribeList
+        }
+    }
+
     private fun getDataBase(): Database {
         val database: Database by App.di.instance()
         return database
+    }
+
+    private fun getUserData(): UserPreferencesRepository {
+        val userPreferencesRepository by App.di.instance<UserPreferencesRepository>()
+        return userPreferencesRepository
     }
 
     private fun Date.toStartOfTheDay(): Date {
